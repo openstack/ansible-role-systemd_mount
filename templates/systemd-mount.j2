@@ -1,0 +1,20 @@
+[Unit]
+Description=Auto mount for {{ (item.where | default(item.what)).strip('/') | replace('/', '-') }}.{{ (item.type == 'swap') | ternary('swap', 'mount') }}
+{% for key, value in (item.unit | default(systemd_default_unit)).items() %}
+{%   for unit_value in value %}
+{{ key }}={{ unit_value }}
+{%   endfor %}
+{% endfor %}
+
+[Mount]
+What={{ item.what }}
+{% if item.type == 'swap' %}
+Priority={{ item.priority | default(0) }}
+{% else %}
+Where={{ item.where }}
+Type={{ item.type }}
+{% endif %}
+Options={{ item.options | default(systemd_default_mount_options) }}
+
+[Install]
+WantedBy=multi-user.target
