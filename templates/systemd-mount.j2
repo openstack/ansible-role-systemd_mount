@@ -6,7 +6,7 @@ Description=Auto mount for {{ (item.where | default(item.what)).strip('/') | rep
 {%   endfor %}
 {% endfor %}
 
-[Mount]
+[{{ (item.type == 'swap') | ternary('Swap', 'Mount') }}]
 What={{ item.what }}
 {% if item.type == 'swap' %}
 Priority={{ item.priority | default(0) }}
