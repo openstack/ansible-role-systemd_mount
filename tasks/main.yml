@@ -1,5 +1,5 @@
 ---
-# Copyright 2017, Rackspace US, Inc.
+# Copyright 2018, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,62 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Fail if mount is missing parameters
+- name: Fail if mount is missing what parameters
   fail:
-    msg: "The mount params are missing [ where ] to mount {{ item }}"
+    msg: "Mount parameters [ type ] is missing for mount {{ item }}"
+  with_items: "{{ systemd_mounts }}"
+  when:
+    - item.type is undefined
+  tags:
+    - always
+
+- name: Fail if mount is missing what parameters
+  fail:
+    msg: "Mount parameters [ what ] is missing for mount {{ item }}"
+  with_items: "{{ systemd_mounts }}"
+  when:
+    - item.what is undefined
+  tags:
+    - always
+
+- name: Fail if mount is missing where parameters
+  fail:
+    msg: "Mount parameters [ where ] is missing for mount {{ item }}"
   with_items: "{{ systemd_mounts }}"
   when:
     - item.where is undefined and item.type != 'swap'
   tags:
     - always
 
-- name: Create mount target(s)
-  file:
-    path: "{{ item.where }}"
-    state: directory
-    owner: "{{ item.owner | default(omit) }}"
-    group: "{{ item.group | default(omit) }}"
-    mode: "0755"
-  with_items: "{{ systemd_mounts }}"
-  when:
-    - item.where is defined
-    - item.state | default('unknown') != 'absent'
-    - item.type != 'swap'
-  tags:
-    - systemd-mount
-
-- name: Create systemd mount point(s)
-  config_template:
-    src: "systemd-mount.j2"
-    dest: "/etc/systemd/system/{{ (item.where | default(item.what)).strip('/') | replace('/', '-') }}.{{ (item.type == 'swap') | ternary('swap', 'mount') }}"
-    owner: "root"
-    group: "root"
-    mode: "0640"
-    config_overrides: "{{ item.config_overrides | default({}) }}"
-    config_type: "ini"
-  with_items: "{{ systemd_mounts }}"
-  when:
-    - item.state | default('unknown') != 'absent'
-  tags:
-    - systemd-mount
-
-- name: Load mount(s)
-  systemd:
-    daemon_reload: yes
-    name: "{{ (item.where | default(item.what)).strip('/') | replace('/', '-') }}.{{ (item.type == 'swap') | ternary('swap', 'mount') }}"
-    enabled: "{{ item.enabled | default(true) }}"
-    state: "{{ item.state | default(omit) }}"
-  when:
-    - item.state | default('unknown') != 'absent'
-  with_items: "{{ systemd_mounts }}"
-
-- name: Unload mount(s)
-  systemd:
-    daemon_reload: yes
-    name: "{{ (item.where | default(item.what)).strip('/') | replace('/', '-') }}.{{ (item.type == 'swap') | ternary('swap', 'mount') }}"
-    enabled: "stopped"
-    no_block: yes
-  when:
-    - item.state | default('unknown') == 'absent'
-  notify: Remove mount
+- include_tasks: systemd_mounts.yml
   with_items: "{{ systemd_mounts }}"

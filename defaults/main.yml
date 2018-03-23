@@ -18,33 +18,16 @@
 #  https://www.freedesktop.org/software/systemd/man/systemd.mount.html#Options=
 systemd_default_mount_options: 'defaults'
 
-
-# The `systemd_default_unit` option can be used on all mounts to start it once
-#  all listed services are ready. This option is a case sensitive free from
-#  disctionary containing list values. See the following link for all available
-#  options: https://www.freedesktop.org/software/systemd/man/systemd.unit.html#%5BUnit%5D%20Section%20Options
-# systemd_default_unit:
-#   After:
-#     - service.one
-#     - service.two
-#   ConditionPathExists:
-#     - /var/path/exists1
-#     - /var/path/exists2
-systemd_default_unit: {}
-
-
 # The systemd mounts dictionary is a set of mounts that will be created. The
 #  dictionary can contain the following options:
 #  `config_overrides` -- (optional) used to inject extra configuration options into the mount file.
 #  `what` -- (required) Define what will be mounted. This can be a network target.
-#  `where` -- (required) Where will the "WHAT" be mounted.
+#  `where` -- (required) Where will the "what" be mounted. Required when type is not swap.
 #  `type` -- (required) The type of file system that will be mounted.
 #  `options` -- (optional) Any optioned required to make the mount point work.
 #                          If no options are provided the default will be used.
 #                          This list is comma separted. See
 #                          `systemd_default_mount_options` for more details.
-#  `unit` -- (optional) Dictionary of unit overrides commonly used in a mount.
-#                       See `systemd_default_unit` for more details.
 #  `state` -- (optional) system state of the mount point. The default will omit
 #                        the state so that it is not started or stopped
 #                        unessisarily. If it is desirable for this role to
@@ -60,9 +43,7 @@ systemd_default_unit: {}
 #     where: '/var/lib/machines'
 #     type: 'btrfs'
 #     options: 'loop'
-#     unit:
-#       ConditionPathExists:
-#         - '/var/lib/machines.raw'
+
 #     state: 'started'
 #     enabled: true
 #   - config_overrides: {}
@@ -70,13 +51,12 @@ systemd_default_unit: {}
 #     Where: "/var/lib/glance/images"
 #     type: "nfs"
 #     options: "_netdev,auto"
-#     unit:
-#       After:
-#         - network.target
+
 #   - what: "/openstack/swap.img"
 #     priority: "0"
 #     options: "%%"
 #     type: "swap"
 #     state: 'started'
 #     enabled: true
-systemd_mounts: {}
+
+systemd_mounts: []

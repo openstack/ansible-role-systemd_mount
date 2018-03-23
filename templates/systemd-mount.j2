@@ -1,10 +1,7 @@
+# {{ ansible_managed }}
+
 [Unit]
-Description=Auto mount for {{ (item.where | default(item.what)).strip('/') | replace('/', '-') }}.{{ (item.type == 'swap') | ternary('swap', 'mount') }}
-{% for key, value in (item.unit | default(systemd_default_unit)).items() %}
-{%   for unit_value in value %}
-{{ key }}={{ unit_value }}
-{%   endfor %}
-{% endfor %}
+Description=Auto mount for {{ item.where | default(item.what) }}
 
 [{{ (item.type == 'swap') | ternary('Swap', 'Mount') }}]
 What={{ item.what }}
