@@ -74,6 +74,8 @@
 
     - name: Export NFS
       command: exportfs -rav
+      tags:
+        - skip_ansible_lint
   vars:
     nfs_package:
       ubuntu: "nfs-kernel-server"
