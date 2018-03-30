@@ -1,9 +1,9 @@
 # {{ ansible_managed }}
 
 [Unit]
-Description=Auto mount for {{ item.where | default(item.what) }}
+Description=Auto mount for {{ systemd_mount_item }}
 
-[{{ (item.type == 'swap') | ternary('Swap', 'Mount') }}]
+[{{ systemd_mount_suffix | capitalize }}]
 What={{ item.what }}
 {% if item.type == 'swap' %}
 Priority={{ item.priority | default(0) }}

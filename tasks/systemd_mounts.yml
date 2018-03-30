@@ -13,8 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Set mount facts
+  set_fact:
+    systemd_mount_suffix: "{{ (item.type == 'swap') | ternary('swap', 'mount') }}"
+    systemd_mount_item: "{{ item.where | default(item.what) }}"
+
 - name: Escape mount service file name
-  command: systemd-escape -p --suffix="{{ (item.type == 'swap') | ternary('swap', 'mount') }}" "{{ item.where | default(item.what) }}"
+  command: systemd-escape -p --suffix="{{ systemd_mount_suffix }}" "{{ systemd_mount_item }}"
   changed_when: false
   register: mount_service_name
 
@@ -46,20 +51,39 @@
   tags:
     - systemd-mount
 
-- name: Load mount(s)
+- name: Load or Unload mount(s)
   systemd:
     daemon_reload: yes
     name: "{{ mount_service_name.stdout }}"
     enabled: "{{ item.enabled | default(true) }}"
-    state: "{{ item.state | default(omit) }}"
   when:
     - item.state | default('unknown') != 'absent'
+
+# NOTE(cloudnull): The systemd module is not used to start the
+#                  mount because we don't want to inavertently
+#                  "restart" a mount unnecessarily. To ensure
+#                  we're able to load new options without
+#                  requiring a mount restart the systemctl
+#                  command is used with the "reload-or-restart"
+#                  argument. Additionally this command escapes
+#                  the name of the mount.
+- name: Set the state of the mount
+  shell: >-
+    systemctl
+    {{ systemd_mount_states[item.state] }}
+    $(systemd-escape -p --suffix="{{ systemd_mount_suffix }}" "{{ systemd_mount_item }}")
+  args:
+    warn: no
+  when:
+    - item.state is defined
+  tags:
+    - skip_ansible_lint
 
 - name: Unload mount(s)
   systemd:
     daemon_reload: yes
     name: "{{ mount_service_name.stdout }}"
-    enabled: "stopped"
+    enabled: false
     no_block: yes
   when:
     - item.state | default('unknown') == 'absent'
