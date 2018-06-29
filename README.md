@@ -16,6 +16,8 @@ You can also use the ``ansible-galaxy`` command on the ``ansible-role-requiremen
 ``` bash
 # ansible-galaxy install -r ansible-role-requirements.yml
 ```
+Release notes for the project can be found at:
+  https://docs.openstack.org/releasenotes/ansible-role-systemd_mount
 
 ----
 
