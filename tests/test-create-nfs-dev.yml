@@ -70,7 +70,7 @@
         enabled: "yes"
         state: "restarted"
       when:
-        - nfs_exportfs | changed
+        - nfs_exportfs  is changed
 
     - name: Export NFS
       command: exportfs -rav

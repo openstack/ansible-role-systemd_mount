@@ -29,4 +29,4 @@
       command: mkswap /var/lib/test-swap.img
       failed_when: false
       when:
-        - create_swap | changed
+        - create_swap  is changed

@@ -40,7 +40,7 @@
         fstype: btrfs
         dev: /var/lib/sparse-file.img
       when:
-        - sparse_file | changed
+        - sparse_file  is changed
   vars:
     btrfs_package:
       apt: "btrfs-tools"
