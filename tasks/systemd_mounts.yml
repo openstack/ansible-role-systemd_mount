@@ -66,18 +66,28 @@
 #                  requiring a mount restart the systemctl
 #                  command is used with the "reload-or-restart"
 #                  argument. Additionally this command escapes
-#                  the name of the mount.
-- name: Set the state of the mount
-  shell: >-
-    systemctl
-    {{ systemd_mount_states[item.state] }}
-    $(systemd-escape -p --suffix="{{ systemd_mount_suffix }}" "{{ systemd_mount_item }}")
-  args:
-    warn: no
-  when:
-    - item.state is defined
-  tags:
-    - skip_ansible_lint
+#                  the name of the mount. If this command fails
+#                  the task will be rescued and the regular
+#                  systemd module will be attempted before
+#                  failing the task run.
+- name: Mount state block
+  block:
+    - name: Set the state of the mount
+      shell: >-
+        systemctl
+        {{ systemd_mount_states[item.state] }}
+        $(systemd-escape -p --suffix="{{ systemd_mount_suffix }}" "{{ systemd_mount_item }}")
+      args:
+        warn: no
+      when:
+        - item.state is defined
+      tags:
+        - skip_ansible_lint
+  rescue:
+    - name: Set the state of the mount (fallback)
+      systemd:
+        name: "{{ mount_service_name.stdout }}"
+        state: "{{ item.state }}"
 
 - name: Unload mount(s)
   systemd:
