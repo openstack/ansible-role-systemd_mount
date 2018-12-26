@@ -2,6 +2,10 @@
 
 [Unit]
 Description=Auto mount for {{ systemd_mount_item }}
+{% if not (item.what is search("^/.*")) or not (item.what is search("^//.*")) %}
+Requires=network-online.target
+After=network-online.target
+{% endif %}
 
 [{{ systemd_mount_suffix | capitalize }}]
 What={{ item.what }}
