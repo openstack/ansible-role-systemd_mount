@@ -79,5 +79,6 @@
   vars:
     nfs_package:
       ubuntu: "nfs-kernel-server"
+      debian: "nfs-kernel-server"
       centos: "nfs-utils"
       opensuse: "nfs-kernel-server"
