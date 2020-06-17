@@ -13,32 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Fail if mount is missing what parameters
-  fail:
-    msg: "Mount parameters [ type ] is missing for mount {{ item }}"
-  with_items: "{{ systemd_mounts }}"
-  when:
-    - item.type is undefined
-  tags:
-    - always
-
-- name: Fail if mount is missing what parameters
-  fail:
-    msg: "Mount parameters [ what ] is missing for mount {{ item }}"
-  with_items: "{{ systemd_mounts }}"
-  when:
-    - item.what is undefined
-  tags:
-    - always
-
-- name: Fail if mount is missing where parameters
-  fail:
-    msg: "Mount parameters [ where ] is missing for mount {{ item }}"
-  with_items: "{{ systemd_mounts }}"
-  when:
-    - item.where is undefined and item.type != 'swap'
-  tags:
-    - always
-
 - include_tasks: systemd_mounts.yml
   with_items: "{{ systemd_mounts }}"
