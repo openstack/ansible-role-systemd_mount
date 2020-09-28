@@ -13,17 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Configure BTRFS sparse file
+- name: Configure ext4 sparse file
   hosts: localhost
   user: root
   become: true
   connection: local
   tasks:
-    - name: Install BTRFS packages
-      package:
-        name: "{{ btrfs_package[ansible_pkg_mgr | lower] }}"
-        state: present
-
     - name: Create base directories
       file:
         path: "/var/lib"
@@ -37,12 +32,7 @@
 
     - name: Format the sparse file
       filesystem:
-        fstype: btrfs
+        fstype: ext4
         dev: /var/lib/sparse-file.img
       when:
         - sparse_file  is changed
-  vars:
-    btrfs_package:
-      apt: "btrfs-tools"
-      yum: "btrfs-progs"
-      zypper: "btrfsprogs"

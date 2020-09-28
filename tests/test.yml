@@ -18,7 +18,7 @@
 
 - import_playbook: test-create-nfs-dev.yml
 
-- import_playbook: test-create-btrfs-dev.yml
+- import_playbook: test-create-ext4-dev.yml
 
 - name: Playbook for role testing
   hosts: localhost
@@ -46,7 +46,7 @@
     systemd_mounts:
       - what: '/var/lib/sparse-file.img'
         where: '/var/lib/sparse-file'
-        type: 'btrfs'
+        type: 'ext4'
         options: 'loop'
         state: 'started'
         enabled: true
