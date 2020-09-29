@@ -1,0 +1,5 @@
+systemd_nfs_packages:
+  - nfs-utils
+
+systemd_ceph_packages:
+  - ceph-fuse

@@ -19,3 +19,14 @@ systemd_mount_states:
   started: reload-or-restart
   stopped: stopped
   absent: stopped
+
+systemd_mount_packages: |-
+  {% set packages = [] %}
+  {% set mount_types = systemd_mounts | map(attribute='type') | list %}
+  {% if 'nfs' in mount_types %}
+  {%   set _ = packages.extend(systemd_nfs_packages) %}
+  {% endif %}
+  {% if 'ceph' in mount_types %}
+  {%   set _ = packages.extend(systemd_ceph_packages) %}
+  {% endif %}
+  {{ packages }}
