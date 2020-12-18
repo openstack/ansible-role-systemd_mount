@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# EPEL repo is required for s3fs package. It won't be added in case s3fs is not required.
+systemd_centos_epel_mirror: "{{ centos_epel_mirror | default('http://download.fedoraproject.org/pub/epel') }}"
+systemd_centos_epel_key: "{{ centos_epel_key | default('http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-' ~ ansible_distribution_major_version) }}"
+
 # Any optioned required to make the mount point work. If no options are
 #  provided the default will be used. This list is comma separted.
 #  https://www.freedesktop.org/software/systemd/man/systemd.mount.html#Options=
@@ -43,7 +47,6 @@ systemd_default_mount_options: 'defaults'
 #     where: '/var/lib/machines'
 #     type: 'btrfs'
 #     options: 'loop'
-
 #     state: 'started'
 #     enabled: true
 #   - config_overrides: {}
@@ -51,12 +54,16 @@ systemd_default_mount_options: 'defaults'
 #     Where: "/var/lib/glance/images"
 #     type: "nfs"
 #     options: "_netdev,auto"
-
 #   - what: "/openstack/swap.img"
 #     priority: "0"
 #     options: "%%"
 #     type: "swap"
 #     state: 'started'
 #     enabled: true
+#   - what: bucket
+#     where: "/mnt/shared_storage"
+#     type: "fuse.s3fs"
+#     options: "url=https://s3-{{aws_region}}.amazonaws.com,_netdev,allow_other,use_path_request_style"
+#     credentials: "ACCESS_KEY_ID:SECRET_ACCESS_KEY"
 
 systemd_mounts: []

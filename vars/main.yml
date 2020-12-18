@@ -20,6 +20,8 @@ systemd_mount_states:
   stopped: stopped
   absent: stopped
 
+systemd_mount_types: "{{ systemd_mounts | map(attribute='type') | list }}"
+
 systemd_mount_packages: |-
   {% set packages = [] %}
   {% set mount_types = systemd_mounts | map(attribute='type') | list %}
@@ -28,5 +30,8 @@ systemd_mount_packages: |-
   {% endif %}
   {% if 'ceph' in mount_types %}
   {%   set _ = packages.extend(systemd_ceph_packages) %}
+  {% endif %}
+  {% if 'fuse.s3fs' in mount_types %}
+  {%   set _ = packages.extend(systemd_s3_packages) %}
   {% endif %}
   {{ packages }}

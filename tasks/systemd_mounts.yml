@@ -23,6 +23,7 @@
   changed_when: false
   register: mount_service_name
 
+# NOTE(noonedeadpunk): with s3fs IO error would raise on attempt to change permissions.
 - name: Create mount target(s)
   file:
     path: "{{ item.where }}"
@@ -30,12 +31,24 @@
     owner: "{{ item.owner | default(omit) }}"
     group: "{{ item.group | default(omit) }}"
     mode: "0755"
+  failed_when: false
   when:
     - item.where is defined
     - item.state | default('unknown') != 'absent'
     - item.type != 'swap'
   tags:
     - systemd-mount
+
+- name: Place mount credentials when required
+  copy:
+    dest: "/etc/passwd-{{ mount_service_name.stdout }}"
+    content: "{{ item.credentials }}"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  when:
+    - item.type == "fuse.s3fs"
+    - "'credentials' in item"
 
 - name: Create systemd mount services(s)
   config_template:
