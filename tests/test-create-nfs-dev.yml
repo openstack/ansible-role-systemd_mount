@@ -21,7 +21,7 @@
   tasks:
     - name: Install NFS packages
       package:
-        name: "{{ nfs_package[ansible_distribution.split()[0] | lower] }}"
+        name: "{{ nfs_package[ansible_facts['distribution'].split()[0] | lower] }}"
         state: present
 
     - name: create the system group for nfs
