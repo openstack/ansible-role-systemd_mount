@@ -35,7 +35,7 @@
     - name: Install the EPEL repository
       yum_repository:
         name: epel-systemd_mounts
-        baseurl: "{{ systemd_centos_epel_mirror ~ '/' ~ ansible_facts['distribution_major_version'] ~ (ansible_facts['distribution_major_version'] is version('8', '>=')) | ternary('/Everything/', '/') ~ ansible_facts['architecture'] }}"
+        baseurl: "{{ systemd_centos_epel_mirror ~ '/' ~ ansible_facts['distribution_major_version'] ~ '/Everything/' ~ ansible_facts['architecture'] }}"
         description: "Extra Packages for Enterprise Linux {{ ansible_facts['distribution_major_version'] }} - $basearch"
         gpgcheck: yes
         enabled: yes
