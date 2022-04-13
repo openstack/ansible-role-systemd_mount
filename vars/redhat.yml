@@ -6,3 +6,7 @@ systemd_ceph_packages:
 
 systemd_s3_packages:
   - s3fs-fuse
+
+systemd_glusterfs_packages:
+  - glusterfs
+  - glusterfs-fuse

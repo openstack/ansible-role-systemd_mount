@@ -34,4 +34,7 @@ systemd_mount_packages: |-
   {% if 'fuse.s3fs' in mount_types %}
   {%   set _ = packages.extend(systemd_s3_packages) %}
   {% endif %}
+  {% if 'glusterfs' in mount_types %}
+  {%   set _ = packages.extend(systemd_glusterfs_packages) %}
+  {% endif %}
   {{ packages }}

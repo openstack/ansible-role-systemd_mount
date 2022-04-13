@@ -65,5 +65,8 @@ systemd_default_mount_options: 'defaults'
 #     type: "fuse.s3fs"
 #     options: "url=https://s3-{{aws_region}}.amazonaws.com,_netdev,allow_other,use_path_request_style"
 #     credentials: "ACCESS_KEY_ID:SECRET_ACCESS_KEY"
+#   - what: gluster-server:gluster-volume-name
+#     where: /mnt/shared_storage
+#     type: glusterfs
 
 systemd_mounts: []
