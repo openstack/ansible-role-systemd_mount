@@ -2,7 +2,9 @@
 
 [Unit]
 Description=Auto mount for {{ systemd_mount_item }}
-{% if not (item.what is search("^/.*")) or not (item.what is search("^//.*")) %}
+{# make unit dependent on network-online.target if network filesystem is being mounted #}
+{# dependency is also added for strings starting with '//' because it may indicate that CIFS/Samba is being used. #}
+{% if not (item.what is search("^(/[^/]|UUID=|LABEL=).*")) %}
 Requires=network-online.target
 After=network-online.target
 {% endif %}
