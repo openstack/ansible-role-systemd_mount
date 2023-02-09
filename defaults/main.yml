@@ -54,6 +54,7 @@ systemd_default_mount_options: 'defaults'
 #     Where: "/var/lib/glance/images"
 #     type: "nfs"
 #     options: "_netdev,auto"
+#     unit_mode: "0640"
 #   - what: "/openstack/swap.img"
 #     priority: "0"
 #     options: "%%"
