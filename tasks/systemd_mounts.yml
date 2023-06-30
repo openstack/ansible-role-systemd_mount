@@ -90,8 +90,6 @@
         systemctl
         {{ systemd_mount_states[item.state] }}
         $(systemd-escape -p --suffix="{{ systemd_mount_suffix }}" "{{ systemd_mount_item }}")
-      args:
-        warn: no
       changed_when: false
       when:
         - item.state is defined
