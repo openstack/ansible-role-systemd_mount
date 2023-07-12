@@ -22,6 +22,7 @@
       get_url:
         url: "{{ systemd_centos_epel_key }}"
         dest: /etc/pki/rpm-gpg
+        mode: "0640"
       register: _get_yum_keys
       until: _get_yum_keys is success
       retries: 5
@@ -66,6 +67,7 @@
       copy:
         content: "c /dev/fuse 0600 - - - 10:229"
         dest: "/etc/tmpfiles.d/openstack-ansible-systemd_mount-glusterfs-client.conf"
+        mode: "0644"
       register: _glusterfs_server_tmpfiles
 
     - name: Apply systemctl overrides

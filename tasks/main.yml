@@ -28,7 +28,9 @@
   tags:
     - always
 
-- include_tasks: systemd_install.yml
+- name: Including systemd_install tasks
+  include_tasks: systemd_install.yml
 
-- include_tasks: systemd_mounts.yml
+- name: Including systemd_mounts tasks
+  include_tasks: systemd_mounts.yml
   with_items: "{{ systemd_mounts }}"
