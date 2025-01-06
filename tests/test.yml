@@ -14,33 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- import_playbook: test-create-swap-dev.yml
-
-- import_playbook: test-create-nfs-dev.yml
-
-- import_playbook: test-create-ext4-dev.yml
-
 - name: Playbook for role testing
-  hosts: localhost
-  connection: local
-  user: root
-  become: true
+  hosts: mount_hosts
   roles:
-    - role: "systemd_mount"
-
-  post_tasks:
-    - name: Ensure mount are mounted
-      command: grep -w '{{ item }}' /proc/mounts
-      with_items:
-        - /var/lib/sparse-file
-        - /var/lib/test
-      tags:
-        - skip_ansible_lint
-
-    - name: Ensure swap is enabled
-      shell: swapon | grep -w '/var/lib/test-swap.img'
-      tags:
-        - skip_ansible_lint
+    - role: "{{ playbook_dir | dirname | basename }}"
 
   vars:
     systemd_mounts:
@@ -54,12 +31,13 @@
           Unit:
             ConditionPathExists: '/var/lib/sparse-file.img'
 
-      - what: "/var/lib/test-swap.img"
-        priority: "0"
-        options: "%%"
-        type: "swap"
-        state: 'started'
-        enabled: true
+      # NOTE: Swap can't be mounted inside of the docker container
+      # - what: "/var/lib/test-swap.img"
+      #   priority: "0"
+      #   options: "%%"
+      #   type: "swap"
+      #   state: 'started'
+      #   enabled: true
 
       - what: "127.0.0.1:/srv/nfs/test"
         where: "/var/lib/test"

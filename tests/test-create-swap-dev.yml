@@ -14,10 +14,7 @@
 # limitations under the License.
 
 - name: Configure swap sparse file
-  hosts: localhost
-  user: root
-  become: true
-  connection: local
+  hosts: mount_hosts
   tasks:
     - name: Create swap file
       command: "dd if=/dev/zero of=/var/lib/test-swap.img bs=1M count=128"

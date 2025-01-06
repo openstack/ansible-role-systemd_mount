@@ -14,15 +14,13 @@
 # limitations under the License.
 
 - name: Create an NFS backing store
-  hosts: localhost
-  user: root
-  become: true
-  connection: local
+  hosts: mount_hosts
   tasks:
     - name: Install NFS packages
       package:
-        name: "{{ nfs_package[ansible_facts['distribution'].split()[0] | lower] }}"
+        name: "{{ nfs_package[ansible_facts['os_family'] | lower] }}"
         state: present
+        update_cache: "{{ (ansible_facts['pkg_mgr'] == 'apt') | ternary(true, omit) }}"
 
     - name: create the system group for nfs
       group:
@@ -78,6 +76,5 @@
         - skip_ansible_lint
   vars:
     nfs_package:
-      ubuntu: "nfs-kernel-server"
       debian: "nfs-kernel-server"
-      centos: "nfs-utils"
+      redhat: "nfs-utils"

@@ -1,5 +1,5 @@
 ---
-# Copyright 2018, Rackspace US, Inc.
+# Copyright 2025, Cleura AB.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,14 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-tempest_run: yes
-tempest_venv_tag: "{{ tempest_git_install_branch }}"
-tempest_venv_bin: "/opt/tempest_{{ tempest_venv_tag }}/bin"
-tempest_log_dir: "/var/log/"
-tempest_test_whitelist:
-  - tempest.scenario.test_server_basic_ops.TestServerBasicOps.test_server_basic_ops
+# - name: Importing test-create-swap-dev
+#   ansible.builtin.import_playbook: test-create-swap-dev.yml
 
-neutron_provider_networks:
-  network_types: "vxlan,flat"
-  network_mappings: "flat:eth12"
-  network_vxlan_ranges: "1:1000"
+- name: Importing test-create-nfs-dev
+  ansible.builtin.import_playbook: test-create-nfs-dev.yml
+
+- name: Importing test-create-ext4-dev
+  ansible.builtin.import_playbook: test-create-ext4-dev.yml
