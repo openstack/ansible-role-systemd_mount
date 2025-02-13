@@ -66,7 +66,7 @@
 
 - name: Load or Unload mount(s)
   systemd:
-    daemon_reload: yes
+    daemon_reload: true
     name: "{{ mount_service_name.stdout }}"
     enabled: "{{ item.enabled | default(true) }}"
   when:
@@ -103,10 +103,10 @@
 
 - name: Unload mount(s)
   systemd:
-    daemon_reload: yes
+    daemon_reload: true
     name: "{{ mount_service_name.stdout }}"
     enabled: false
-    no_block: yes
+    no_block: true
   when:
     - item.state | default('unknown') == 'absent'
   notify: Remove mount

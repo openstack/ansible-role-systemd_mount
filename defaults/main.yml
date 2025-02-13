@@ -21,7 +21,7 @@ systemd_centos_epel_key: >-
 # Any optioned required to make the mount point work. If no options are
 #  provided the default will be used. This list is comma separted.
 #  https://www.freedesktop.org/software/systemd/man/systemd.mount.html#Options=
-systemd_default_mount_options: 'defaults'
+systemd_default_mount_options: "defaults"
 
 # The systemd mounts dictionary is a set of mounts that will be created. The
 #  dictionary can contain the following options:

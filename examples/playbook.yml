@@ -1,3 +1,4 @@
+---
 - name: Create a systemd mount file for Mount1 and 2
   hosts: localhost
   become: true
@@ -6,14 +7,14 @@
       vars:
         systemd_mounts:
           machines:
-            what: '/var/lib/machines.raw'
-            where: '/var/lib/machines'
-            type: 'btrfs'
-            options: 'loop'
+            what: "/var/lib/machines.raw"
+            where: "/var/lib/machines"
+            type: "btrfs"
+            options: "loop"
             unit:
               ConditionPathExists:
-                - '/var/lib/machines.raw'
-            state: 'started'
+                - "/var/lib/machines.raw"
+            state: "started"
             enabled: true
           glance_images:
             config_overrides: {}

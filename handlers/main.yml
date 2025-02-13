@@ -33,6 +33,6 @@
 
 - name: Reload systemd daemon
   systemd:
-    daemon_reload: yes
-    no_block: yes
+    daemon_reload: true
+    no_block: true
   listen: Remove mount
