@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Gather variables for each operating system
-  include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
       files:
@@ -29,8 +29,8 @@
     - always
 
 - name: Including systemd_install tasks
-  include_tasks: systemd_install.yml
+  ansible.builtin.include_tasks: systemd_install.yml
 
 - name: Including systemd_mounts tasks
-  include_tasks: systemd_mounts.yml
+  ansible.builtin.include_tasks: systemd_mounts.yml
   with_items: "{{ systemd_mounts }}"

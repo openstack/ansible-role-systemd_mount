@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Delete mount file(s)
-  file:
+  ansible.builtin.file:
     path: "/etc/systemd/system/{{ item.where.strip('/') | replace('/', '-') }}.{{ item.type == 'swap' | ternary('swap', 'mount') }}"
     state: "absent"
   when:
@@ -23,7 +23,7 @@
   listen: Remove mount
 
 - name: Delete mount target(s)
-  file:
+  ansible.builtin.file:
     path: "{{ item.where }}"
     state: "absent"
   when:
@@ -32,7 +32,7 @@
   listen: Remove mount
 
 - name: Reload systemd daemon
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
     no_block: true
   listen: Remove mount

@@ -14,18 +14,18 @@
 # limitations under the License.
 
 - name: Set mount facts
-  set_fact:
+  ansible.builtin.set_fact:
     systemd_mount_suffix: "{{ (item.type == 'swap') | ternary('swap', 'mount') }}"
     systemd_mount_item: "{{ item.where | default(item.what) }}"
 
 - name: Escape mount service file name
-  command: systemd-escape -p --suffix="{{ systemd_mount_suffix }}" "{{ systemd_mount_item }}"
+  ansible.builtin.command: systemd-escape -p --suffix="{{ systemd_mount_suffix }}" "{{ systemd_mount_item }}"
   changed_when: false
   register: mount_service_name
 
 # NOTE(noonedeadpunk): with s3fs IO error would raise on attempt to change permissions.
 - name: Create mount target(s)
-  file:
+  ansible.builtin.file:
     path: "{{ item.where }}"
     state: directory
     owner: "{{ item.owner | default(omit) }}"
@@ -40,7 +40,7 @@
     - systemd-mount
 
 - name: Place mount credentials when required
-  copy:
+  ansible.builtin.copy:
     dest: "/etc/passwd-{{ mount_service_name.stdout }}"
     content: "{{ item.credentials }}"
     owner: "root"
@@ -65,7 +65,7 @@
     - systemd-mount
 
 - name: Load or Unload mount(s)
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
     name: "{{ mount_service_name.stdout }}"
     enabled: "{{ item.enabled | default(true) }}"
@@ -97,12 +97,12 @@
         - skip_ansible_lint
   rescue:
     - name: Set the state of the mount (fallback)
-      systemd:
+      ansible.builtin.systemd:
         name: "{{ mount_service_name.stdout }}"
         state: "{{ item.state }}"
 
 - name: Unload mount(s)
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
     name: "{{ mount_service_name.stdout }}"
     enabled: false
