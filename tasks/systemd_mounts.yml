@@ -85,16 +85,11 @@
 #                  failing the task run.
 - name: Mount state block
   block:
-    - name: Set the state of the mount
-      shell: >-
-        systemctl
-        {{ systemd_mount_states[item.state] }}
-        $(systemd-escape -p --suffix="{{ systemd_mount_suffix }}" "{{ systemd_mount_item }}")
+    - name: Set the state of the mount  # noqa: command-instead-of-module
+      ansible.builtin.command: "systemctl {{ systemd_mount_states[item.state] }} {{ mount_service_name.stdout }}"
       changed_when: false
       when:
         - item.state is defined
-      tags:
-        - skip_ansible_lint
   rescue:
     - name: Set the state of the mount (fallback)
       ansible.builtin.systemd:
