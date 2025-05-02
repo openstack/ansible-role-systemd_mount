@@ -2,10 +2,18 @@
 systemd_mount role for OpenStack-Ansible
 ========================================
 
-:tags: openstack, systemd_mount, cloud, ansible
-:category: \*nix
-
 This role will configure Systemd units:
+
+This role requires the ``ansible-config_template`` collection to be available
+on your local system.
+
+To get collection you can use use the ``ansible-galaxy`` command on the
+``requirements.yml`` file. You need to install collection **before**
+running this role.
+
+.. code-block:: bash
+
+    ansible-galaxy install -r requirements.yml
 
 Default variables
 ~~~~~~~~~~~~~~~~~
