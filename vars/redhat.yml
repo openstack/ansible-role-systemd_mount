@@ -11,4 +11,4 @@ systemd_s3_packages:
 systemd_glusterfs_packages:
   - glusterfs
   - glusterfs-fuse
-  - systemd-udev-252-*
+  - systemd-udev
