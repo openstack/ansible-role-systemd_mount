@@ -21,7 +21,12 @@
 - name: Escape mount service file name
   ansible.builtin.command: systemd-escape -p --suffix="{{ systemd_mount_suffix }}" "{{ systemd_mount_item }}"
   changed_when: false
-  register: mount_service_name
+  register: mount_service_name_escaped
+  when: item.escape_name | default(true)
+
+- name: Define mount service name
+  ansible.builtin.set_fact:
+    mount_service_name: "{{ mount_service_name_escaped.stdout | default([systemd_mount_item, systemd_mount_suffix] | join('.')) }}"
 
 # NOTE(noonedeadpunk): with s3fs IO error would raise on attempt to change permissions.
 - name: Create mount target(s)
@@ -41,7 +46,7 @@
 
 - name: Place mount credentials when required
   ansible.builtin.copy:
-    dest: "/etc/passwd-{{ mount_service_name.stdout }}"
+    dest: "/etc/passwd-{{ mount_service_name }}"
     content: "{{ item.credentials }}"
     owner: "root"
     group: "root"
@@ -53,7 +58,7 @@
 - name: Create systemd mount services(s)
   openstack.config_template.config_template:
     src: "systemd-mount.j2"
-    dest: "/etc/systemd/system/{{ mount_service_name.stdout }}"
+    dest: "/etc/systemd/system/{{ mount_service_name }}"
     owner: "root"
     group: "root"
     mode: "{{ item.unit_mode | default('0644') }}"
@@ -67,7 +72,7 @@
 - name: Load or Unload mount(s)
   ansible.builtin.systemd:
     daemon_reload: true
-    name: "{{ mount_service_name.stdout }}"
+    name: "{{ mount_service_name }}"
     enabled: "{{ item.enabled | default(true) }}"
   when:
     - item.state | default('unknown') != 'absent'
@@ -84,7 +89,7 @@
 #                  systemd module will be attempted before
 #                  failing the task run.
 - name: Set the state of the mount  # noqa: command-instead-of-module
-  ansible.builtin.command: "systemctl {{ systemd_mount_states[item.state] }} {{ mount_service_name.stdout }}"
+  ansible.builtin.command: "systemctl {{ systemd_mount_states[item.state] }} {{ mount_service_name }}"
   changed_when: false
   ignore_errors: true
   register: set_mount_state_command
@@ -93,7 +98,7 @@
 
 - name: Set the state of the mount (fallback)
   ansible.builtin.systemd:
-    name: "{{ mount_service_name.stdout }}"
+    name: "{{ mount_service_name }}"
     state: "{{ item.state }}"
   when:
     - set_mount_state_command is failed
@@ -101,7 +106,7 @@
 - name: Unload mount(s)
   ansible.builtin.systemd:
     daemon_reload: true
-    name: "{{ mount_service_name.stdout }}"
+    name: "{{ mount_service_name }}"
     enabled: false
     no_block: true
   when:
