@@ -70,5 +70,11 @@ systemd_default_mount_options: "defaults"
 #   - what: gluster-server:gluster-volume-name
 #     where: /mnt/shared_storage
 #     type: glusterfs
-
+#   - what: dev-hugepages
+#     mount_overrides_only: true
+#     type: hugetlbfs
+#     escape_name: false
+#     config_overrides:
+#       Mount:
+#         Options: pagesize=2MB
 systemd_mounts: []

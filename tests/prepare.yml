@@ -21,3 +21,11 @@
 
 - name: Importing test-create-ext4-dev
   ansible.builtin.import_playbook: test-create-ext4-dev.yml
+
+- name: Unmask dev-hugepages mount
+  hosts: mount_hosts
+  tasks:
+    - name: Unmask hugepages
+      ansible.builtin.systemd:
+        name: dev-hugepages.mount
+        masked: false

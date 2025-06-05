@@ -66,8 +66,34 @@
     config_type: "ini"
   when:
     - item.state | default('unknown') != 'absent'
+    - (item.mount_overrides_only is not defined) or (item.mount_overrides_only is defined and not item.mount_overrides_only)
   tags:
     - systemd-mount
+
+- name: Provision mount overrides file
+  when:
+    - item.mount_overrides_only is defined
+    - item.mount_overrides_only | bool
+    - item.config_overrides | length > 0
+  tags:
+    - systemd-mount
+  block:
+    - name: Create overrides folder for mount
+      ansible.builtin.file:
+        path: "/etc/systemd/system/{{ mount_service_name }}.d"
+        owner: "root"
+        group: "root"
+        mode: "0755"
+        state: directory
+
+    - name: Create overrides file
+      openstack.config_template.config_template:
+        dest: "/etc/systemd/system/{{ mount_service_name }}.d/overrides.conf"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+        config_overrides: "{{ item.config_overrides | default({}) }}"
+        config_type: "ini"
 
 - name: Load or Unload mount(s)
   ansible.builtin.systemd:

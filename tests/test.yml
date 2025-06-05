@@ -51,3 +51,11 @@
               ? network.target
               ? network-online.target
             Wants: network-online.target
+
+      - what: dev-hugepages
+        mount_overrides_only: true
+        type: hugetlbfs
+        escape_name: false
+        config_overrides:
+          Mount:
+            Options: pagesize=2MB

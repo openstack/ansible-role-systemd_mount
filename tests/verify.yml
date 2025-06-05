@@ -17,7 +17,7 @@
   hosts: mount_hosts
   tasks:
     - name: Ensure mount are mounted
-      command: grep -w '{{ item }}' /proc/mounts
+      ansible.builtin.command: grep -w '{{ item }}' /proc/mounts
       changed_when: false
       with_items:
         - /var/lib/sparse-file
@@ -29,3 +29,13 @@
     #   shell: swapon | grep -w '/var/lib/test-swap.img'
     #   tags:
     #     - skip_ansible_lint
+
+    - name: Fetch override files for hugepages
+      ansible.builtin.slurp:
+        src: /etc/systemd/system/dev-hugepages.mount.d/overrides.conf
+      register: hugepages_overrides
+
+    - name: Verify hugepages overrides
+      ansible.builtin.assert:
+        that:
+          - "'pagesize=2MB' in hugepages_overrides.content | b64decode"
