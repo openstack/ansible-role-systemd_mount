@@ -121,6 +121,7 @@
   register: set_mount_state_command
   when:
     - item.state is defined
+    - item.state != 'absent'
 
 - name: Set the state of the mount (fallback)
   ansible.builtin.systemd:
